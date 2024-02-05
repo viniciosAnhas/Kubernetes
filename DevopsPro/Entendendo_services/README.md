@@ -249,3 +249,40 @@ spec:
   - port: 80
     targetPort: 80
 ```
+
+<h1>ExternalName</h1>
+
+<p style="text-align: justify;">O tipo de serviço ExternalName é usado para associar um serviço a um nome de host externo, permitindo o acesso direto a esse serviço usando o nome de host fornecido. Aqui estão os principais pontos relacionados ao tipo de serviço ExternalName:</p>
+
+<ol>
+  <li style="text-align: justify;"><b>Associação a Nome de Host Externo</b></li>
+  <ul>
+    <li style="text-align: justify;">O ExternalName permite associar um serviço a um nome de host externo, como um serviço de banco de dados hospedado fora do cluster.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Acesso Direto por Nome de Host</b></li>
+  <ul>
+    <li style="text-align: justify;">Em vez de usar um IP ou nome DNS interno do cluster, os clientes podem acessar o serviço diretamente usando o nome de host fornecido pelo serviço ExternalName.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Escopo de Acesso</b></li>
+  <ul>
+    <li style="text-align: justify;">O acesso ao serviço é direto e não é roteado através do DNS interno do Kubernetes. Isso significa que o serviço externo é acessado diretamente pelos clientes.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Sem Balanceamento de Carga Interno:</b></li>
+  <ul>
+    <li style="text-align: justify;">Ao contrário de outros tipos de serviços, o ExternalName não oferece balanceamento de carga interno. Ele simplesmente direciona as solicitações para o nome de host externo especificado.</li>
+  </ul>
+</ol>
+
+<p style="text-align: justify;">Um exemplo básico de um Service ExternalName YAML.</p>
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: anhas-service
+spec:
+  type: ExternalName
+  externalName: anhas.dev
+```
+
+<p style="text-align: justify;">Em resumo, o tipo de serviço ExternalName no Kubernetes é útil quando se precisa associar um serviço a um nome de host externo, proporcionando um acesso direto e transparente a serviços hospedados fora do cluster. Este tipo de serviço é comumente usado para integrar serviços externos ao ambiente do Kubernetes.</p>
