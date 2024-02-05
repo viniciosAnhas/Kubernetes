@@ -120,10 +120,75 @@ apt update
 apt install curl -y
 ```
 
-<p style="text-align: justify;">Apos utilize o comando <i>curl http://front-service<i>, isso ira retornar o HTML da pagina inicial do nginx no terminal.</p>
+<p style="text-align: justify;">Apos utilize o comando <i>curl http://front-service</i>, isso ira retornar o HTML da pagina inicial do nginx no terminal.</p>
 
 ```bash
 curl http://front-service
 ```
 
 <p style="text-align: justify;">Em resumo, o Service ClusterIP é uma maneira eficiente de disponibilizar serviços dentro do cluster Kubernetes, proporcionando uma comunicação interna entre os componentes de um aplicativo distribuído.</p>
+
+<h1>NodePort</h1>
+
+<p style="text-align: justify;">o tipo de serviço NodePort é usado para expor um serviço para fora do cluster, tornando-o acessível em um porto específico em todos os nós do cluster. Aqui estão os pontos-chave sobre o tipo de serviço NodePort:</p>
+
+<ol>
+  <li style="text-align: justify;"><b>Escopo de Acesso</b></li>
+  <ul>
+    <li style="text-align: justify;">O NodePort expõe o serviço em um porto fixo em todos os nós do cluster Kubernetes. Isso permite que o serviço seja acessado externamente usando o IP do nó e a porta atribuída.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Porta Fixa</b></li>
+  <ul>
+    <li style="text-align: justify;">O NodePort atribui uma porta fixa (na faixa de 30000-32767) em todos os nós do cluster. Essa porta é a mesma em todos os nós e é usada para acessar o serviço de qualquer nó.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Encaminhamento para Pods</b></li>
+  <ul>
+    <li style="text-align: justify;">O tráfego recebido na porta NodePort é encaminhado para o serviço e, em seguida, distribuído para os Pods associados com base nas regras de seletores.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Uso do Node IP</b></li>
+  <ul>
+    <li style="text-align: justify;">Para acessar o serviço, pode-se usar o IP de qualquer nó do cluster junto com a porta NodePort atribuída.</li>
+  </ul>
+</ol>
+
+<p style="text-align: justify;">Um exemplo básico de um Service NodeIP YAML incluiria a definição do tipo de Service, o seletor de Pods associado e detalhes sobre as portas expostas.</p>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+      - name: front
+        image: nginx
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-service
+spec:
+  selector:
+    app: front
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+```
+
+<p style="text-align: justify;">Para verificar se o service foi criado com sucesso e verificar qual a porta esta sendo utilizada execute o comando <i>kubectl get services</i>.</p>
+
+<p style="text-align: justify;">Va no navegador e acesse o endereço <i>http://localhost:numeroDaPorta/</i></p>
+
+<h1>LoadBalancer</h1>
