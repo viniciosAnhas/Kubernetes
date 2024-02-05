@@ -130,7 +130,7 @@ curl http://front-service
 
 <h1>NodePort</h1>
 
-<p style="text-align: justify;">o tipo de serviço NodePort é usado para expor um serviço para fora do cluster, tornando-o acessível em um porto específico em todos os nós do cluster. Aqui estão os pontos-chave sobre o tipo de serviço NodePort:</p>
+<p style="text-align: justify;">O tipo de serviço NodePort é usado para expor um serviço para fora do cluster, tornando-o acessível em um porto específico em todos os nós do cluster. Aqui estão os pontos-chave sobre o tipo de serviço NodePort:</p>
 
 <ol>
   <li style="text-align: justify;"><b>Escopo de Acesso</b></li>
@@ -192,3 +192,60 @@ spec:
 <p style="text-align: justify;">Va no navegador e acesse o endereço <i>http://localhost:numeroDaPorta/</i></p>
 
 <h1>LoadBalancer</h1>
+
+<p style="text-align: justify;">O tipo de serviço LoadBalancer é usado para expor um serviço para fora do cluster, provisionar automaticamente um balanceador de carga externo, porem para realizar o acesso a aplicação o provedor de nuvem ira forncecer um endereço IP para o acesso. Aqui estão os principais pontos relacionados ao tipo de serviço LoadBalancer:</p>
+
+<ol>
+  <li style="text-align: justify;"><b>Escopo de Acesso</b></li>
+  <ul>
+    <li style="text-align: justify;">O LoadBalancer expõe o serviço para fora do cluster, permitindo que seja acessado por clientes externos à infraestrutura do Kubernetes.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Balanceador de Carga Externo</b></li>
+  <ul>
+    <li style="text-align: justify;">O Kubernetes provisiona automaticamente um balanceador de carga externo, geralmente fornecido pelo provedor de nuvem do Kubernetes. Esse balanceador de carga distribui o tráfego entre os Pods associados ao serviço.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Endereço IP Externo</b></li>
+  <ul>
+    <li style="text-align: justify;">O LoadBalancer é associado a um endereço IP externo fixo. Os clientes externos podem acessar o serviço usando esse endereço IP e a porta exposta.</li>
+  </ul>
+  <li style="text-align: justify;"><b>Encaminhamento para Pods</b></li>
+  <ul>
+    <li style="text-align: justify;">O tráfego recebido pelo balanceador de carga externo é encaminhado para os Pods associados ao serviço com base nas regras de seletores.</li>
+  </ul>
+</ol>
+
+<p style="text-align: justify;">Um exemplo básico de um Service LoadBalancer YAML.</p>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+      - name: front
+        image: nginx
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-service
+spec:
+  selector:
+    app: front
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+```
