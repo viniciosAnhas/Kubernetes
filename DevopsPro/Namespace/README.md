@@ -41,7 +41,7 @@ kubectl get namespace
 kubectl create namespace prod
 ```
 
-<p style="text-align: justify;">Ao criar um recurso no Kubernetes, como um Pod ou um Service, é possível associá-lo a um Namespace específico. Por exemplo, ao criar um Pod, pode-se incluir um campo namespace no arquivo de configuração YAML</p>
+<p style="text-align: justify;">Ao criar um recurso no Kubernetes, como um Pod ou um Service, é possível associá-lo a um Namespace específico. Por exemplo, ao criar um Pod, pode-se incluir um campo namespace no arquivo de configuração YAML.</p>
 
 ```yaml
 apiVersion: v1
@@ -54,3 +54,5 @@ spec:
   - name: mycontainer
     image: nginx
 ```
+
+<p style="text-align: justify;">Em resumo, os Namespaces no Kubernetes proporcionam uma maneira de organizar, isolar e dividir logicamente os recursos em um cluster, facilitando a gestão e a administração de ambientes complexos com múltiplas equipes ou aplicações.</p>
