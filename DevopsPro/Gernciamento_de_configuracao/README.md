@@ -117,3 +117,80 @@ kubectl describe configmap mongodb-configmap
 ```
 
 <p style="text-align: justify;">Em resumo, o ConfigMap é uma ferramenta valiosa no Kubernetes para gerenciar dados de configuração de forma flexível e dinâmica, facilitando a separação das configurações do código da aplicação e permitindo atualizações sem a necessidade de reiniciar os Pods.</p>
+
+<h1>Secret</h1>
+
+<p style="text-align: justify;">
+No Kubernetes, o recurso Secret é usado para armazenar e gerenciar dados sensíveis, como senhas, chaves de API e certificados. Aqui está um resumo dos principais aspectos relacionados aos Secrets.</p>
+
+<ol>
+  <li style="text-align: justify;">Definição</li>
+  <ul>
+    <li style="text-align: justify;">Um Secret é um recurso no Kubernetes projetado para armazenar e gerenciar informações sensíveis, como senhas, chaves de API e certificados.</li>
+  </ul>
+  <li style="text-align: justify;">Codificação Base64</li>
+  <ul>
+    <li style="text-align: justify;">Os dados dentro de um Secret são codificados em base64, proporcionando uma camada mínima de segurança. No entanto, os Secrets não são destinados a fornecer segurança total e não devem ser usados para armazenar informações altamente confidenciais sem considerações adicionais.</li>
+  </ul>
+  <li style="text-align: justify;">Utilização em Pods</li>
+  <ul>
+    <li style="text-align: justify;">Secrets podem ser montados como volumes em Pods ou usados como variáveis de ambiente. Isso permite que os dados sensíveis sejam acessados pelos aplicativos dentro dos contêineres.</li>
+  </ul>
+</ol>
+
+<p style="text-align: justify;">Veja um exemplo de secret a seguir, iremos usar o mesmo pod do mongodb, porem utilizando o secrete para armazenar as variavies <b>MONGO_INITDB_ROOT_USRNAME</b> e <b>MONGO_INITDB_ROOT_PASSWORD</b>.</p>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:4.2.8
+        ports:
+          - containerPort: 27017
+        envFrom:
+          - secretRef:
+             name: mongodb-secret
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-secret
+type: Opaque
+data:
+  MONGO_INITDB_ROOT_USRNAME: bW9uZ291c2Vy
+  MONGO_INITDB_ROOT_PASSWORD: bW9uZ29wd2Q=
+```
+
+<p style="text-align: justify;">Repare que no valor do usuario e senha, os valores precisam ser passados criptografados na base 64 para isso voce pode utilizar o comando no bash <i>echo -n "valor" | base64</i>.</p>
+
+```bash
+echo -n "valor" | base64
+```
+
+<p style="text-align: justify;">Para verificarmos se o secret foi criado corretamente podemos utilizar o comando <i>kubectl get secret</i>.</p>
+
+```bash
+kubectl get secret
+```
+
+<p style="text-align: justify;">Utilizando o comando <i>kubectl describe secret nomedosecret</i>, iremos verificar que os valores foram criptografados, tendo assim mais segurança para armazenar valores sensíveis.</p>
+
+```bash
+kubectl describe secret mongodb-secret
+```
+
+<p style="text-align: justify;">Em resumo, o Secret no Kubernetes é uma ferramenta valiosa para gerenciar e disponibilizar informações sensíveis aos aplicativos em execução em contêineres, garantindo a segurança e flexibilidade necessárias para trabalhar com dados confidenciais.</p>
