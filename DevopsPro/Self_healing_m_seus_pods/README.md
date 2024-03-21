@@ -111,3 +111,52 @@ spec:
 <p style="text-align: justify;">Neste exemplo o Readiness Probe é configurada para fazer uma requisição HTTP GET para o caminho /ready na porta 80 do contêiner, A primeira sonda é realizada após 10 segundos da inicialização do contêiner (initialDelaySeconds: 10) e As sondas subsequentes são realizadas a cada 5 segundos (periodSeconds: 5).</p>
 
 <p style="text-align: justify;">Em resumo, o Readiness Probes são essenciais para garantir que os contêineres em execução estejam prontos para receber tráfego de rede antes de serem incluídos na carga de trabalho do serviço, contribuindo assim para a resiliência e a confiabilidade dos aplicativos no ambiente Kubernetes.</p>
+
+<h1>Startup Probes</h1>
+
+<p style="text-align: justify;">Startup Probe é um mecanismo utilizado para verificar se um contêiner dentro de um Pod foi inicializado corretamente. Ela é usada durante o processo de inicialização do contêiner para determinar se ele está pronto para receber tráfego. Aqui está um resumo sobre as Startup Probes</p>
+
+<ol>
+  <li style="text-align: justify;">Definição</li>
+  <ul>
+    <li style="text-align: justify;">O Startup Probe é uma sonda que verifica se um contêiner foi inicializado corretamente e está pronto para começar a servir solicitações. Ela é especialmente útil para aplicativos que podem levar algum tempo para iniciar completamente.</li>
+  </ul>
+  <li style="text-align: justify;">Propósito</li>
+  <ul>
+    <li style="text-align: justify;">O propósito da Startup Probe é garantir que um contêiner seja considerado pronto somente após ter sido completamente inicializado e estiver em um estado saudável. Isso ajuda a evitar que o contêiner receba tráfego antes de estar pronto para processá-lo.</li>
+  </ul>
+  <li style="text-align: justify;">Recuperação Automática</li>
+  <ul>
+    <li style="text-align: justify;">Se um contêiner falhar na sonda de inicialização, o Kubernetes pode reiniciar automaticamente o Pod. Isso permite que o Kubernetes tente novamente a inicialização do contêiner, ajudando na recuperação automática de falhas durante o processo de inicialização.</li>
+  </ul>
+  <li style="text-align: justify;">Integração com Readiness e Liveness Probes</li>
+  <ul>
+    <li style="text-align: justify;">O Startup Probe pode ser usada em conjunto com as sondas de prontidão (Readiness Probes) e vitalidade (Liveness Probes) para garantir que um contêiner seja totalmente inicializado, pronto para aceitar tráfego e saudável antes de ser incluído na carga de trabalho do serviço.</li>
+  </ul>
+</ol>
+
+<p style="text-align: justify;">Vamos ver um exemplo de um pod utilizando o Startup Probe.</p>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mycontainer
+    image: nginx
+    ports:
+    - containerPort: 80
+    startupProbe:
+      httpGet:
+        path: /
+        port: 80
+      failureThreshold: 30
+      periodSeconds: 10
+```
+
+<p style="text-align: justify;">Neste exemplo o sonda envia uma requisição HTTP GET para o caminho / na porta 80 do contêiner, failureThreshold define o número de vezes que a sonda pode falhar antes de o Kubernetes considerar o contêiner não inicializado corretamente. Neste exemplo, se a sonda falhar 30 vezes consecutivas, o contêiner será considerado não inicializado corretamente e periodSeconds especifica o intervalo entre as sondas. Neste exemplo, a sonda é realizada a cada 10 segundos.</p>
+
+
+<p style="text-align: justify;">Em resumo, a Startup Probe é uma ferramenta valiosa no Kubernetes para garantir que os contêineres sejam inicializados corretamente e estejam prontos para começar a servir solicitações antes de serem incluídos na carga de trabalho do serviço, contribuindo assim para a confiabilidade e a estabilidade dos aplicativos no ambiente Kubernetes.</p>
